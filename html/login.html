@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dark Interactive Login & Register with NID Demo</title>
+<link rel="stylesheet" href="../css/login.css">
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<div class="container">
+  <div class="left-panel">
+    <h2>Upload Your Picture</h2>
+    <div class="image-preview" id="imagePreview">
+      <span style="color:#666;">No image selected</span>
+    </div>
+    <label for="imgUpload" class="upload-btn">File Upload</label>
+    <input type="file" id="imgUpload" accept="image/*" />
+
+    <button id="faceReconfigBtn" type="button" title="Face Reconfiguration (Demo)">Face Reconfiguration</button>
+  </div>
+
+  <div class="right-panel">
+    <div class="tab-header">
+      <button id="loginTab" class="active" type="button" aria-selected="true">Login</button>
+      <button id="registerTab" type="button" aria-selected="false">Register</button>
+    </div>
+
+    <!-- Login Section -->
+    <section id="loginSection" class="form-section" role="tabpanel" aria-hidden="false">
+      <h1>Login</h1>
+      <form id="loginForm" novalidate>
+        <label for="loginUsername">Username</label>
+        <input type="text" id="loginUsername" name="username" placeholder="Enter your username" required autocomplete="username" />
+
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required autocomplete="current-password" />
+
+        <button type="submit">Login</button>
+      </form>
+      <p style="margin-top: 20px; color: #bbb; text-align:center;">
+        Don't have an account? <a href="#" id="showRegister" style="color:#bb86fc;">Register here</a>
+      </p>
+    </section>
+
+    <!-- Register Section -->
+    <section id="registerSection" class="form-section hidden" role="tabpanel" aria-hidden="true">
+      <h1>Register</h1>
+      <form id="registerForm" novalidate>
+        <label for="nidInput">NID (13-digit)</label>
+        <input
+          type="text"
+          id="nidInput"
+          maxlength="13"
+          pattern="\\d{13}"
+          placeholder="Enter 13-digit NID"
+          required
+          autocomplete="off"
+          inputmode="numeric"
+          title="Only 13 digits allowed"
+        />
+
+        <div id="nidInfo"></div>
+
+        <label for="mobileInput">Mobile Number</label>
+        <input
+          type="text"
+          id="mobileInput"
+          pattern="^(01[3-9]\\d{8})$"
+          placeholder="e.g. 017XXXXXXXX"
+          required
+          disabled
+          autocomplete="tel"
+          inputmode="tel"
+          title="Bangladeshi mobile number"
+        />
+
+        <label for="emailInput">Email</label>
+        <input
+          type="email"
+          id="emailInput"
+          placeholder="Enter your email"
+          required
+          disabled
+          autocomplete="email"
+        />
+
+        <label for="passwordInput">Password</label>
+        <input
+          type="password"
+          id="passwordInput"
+          minlength="6"
+          placeholder="Minimum 6 characters"
+          required
+          disabled
+          autocomplete="new-password"
+        />
+
+        <button type="submit" disabled>Register</button>
+      </form>
+      <p style="margin-top: 20px; color: #bbb; text-align:center;">
+        Already have an account? <a href="#" id="showLogin" style="color:#bb86fc;">Login here</a>
+      </p>
+    </section>
+  </div>
+</div>
+<script src="../js/login.js"></script>
+</body>
+</html>

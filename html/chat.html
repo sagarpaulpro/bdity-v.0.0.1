@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Messenger Chat</title>
+  <link rel="stylesheet" href="../css/chat.css"/>
+</head>
+<body>
+  <div class="messenger">
+    <div class="chat-header">Messenger Clone</div>
+    <div class="chat-window" id="chatWindow"></div>
+    <div class="input-area">
+      <select id="userSelector">
+        <option value="user1">User 1</option>
+        <option value="user2">User 2</option>
+      </select>
+      <input type="text" id="chatInput" placeholder="Type a message...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script src="../js/chat.js"></script>
+</body>
+</html>

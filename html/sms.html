@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Interactive Messenger with Voice, Emoji, Attachments</title>
+<style>
+  body {
+    margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #18191a; color: #e4e6eb; height: 100vh; display: flex; justify-content: center; align-items: center;
+  }
+  .messenger {
+    background: #242526; width: 420px; height: 600px; border-radius: 10px; display: flex; flex-direction: column; box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  }
+  .header {
+    padding: 15px; font-size: 20px; font-weight: bold; text-align: center; background: #3a3b3c; border-bottom: 1px solid #555;
+  }
+  .chat-box {
+    flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #18191a;
+  }
+  .message {
+    max-width: 70%; padding: 10px 15px; border-radius: 15px; position: relative; animation: fadeIn 0.3s ease-in;
+    word-wrap: break-word; white-space: pre-wrap;
+  }
+  .me { align-self: flex-end; background: #2e89ff; color: white; border-bottom-right-radius: 0;}
+  .you { align-self: flex-start; background: #3e4042; border-bottom-left-radius: 0;}
+  .timestamp {
+    font-size: 10px; color: #aaa; margin-top: 3px; text-align: right;
+  }
+  .input-area {
+    padding: 10px; background: #3a3b3c; display: flex; gap: 5px; align-items: center;
+  }
+  textarea {
+    flex: 1; padding: 10px; resize: none; border-radius: 8px; border: none; font-size: 14px; background: #242526; color: #e4e6eb;
+    outline: none; max-height: 70px;
+  }
+  button, label {
+    background: #2e89ff; border: none; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer;
+    font-weight: bold; user-select: none; transition: background 0.3s;
+  }
+  button:hover, label:hover { background: #166fe5; }
+  input[type="file"] { display: none; }
+  #emojiPicker {
+    position: absolute; bottom: 60px; right: 20px; background: #3a3b3c; padding: 10px; border-radius: 10px; display: none; max-width: 300px; max-height: 200px; overflow-y: auto;
+  }
+  #emojiPicker span {
+    font-size: 22px; padding: 5px; cursor: pointer; user-select: none;
+  }
+  #emojiPicker span:hover {
+    background: #2e89ff; border-radius: 6px;
+  }
+  audio, video {
+    max-width: 100%; border-radius: 8px;
+  }
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+</style>
+</head>
+<body>
+
+<div class="messenger">
+  <div class="header">Chat with Krishna</div>
+  <div class="chat-box" id="chatBox"></div>
+
+  <div class="input-area">
+    <button id="emojiBtn" title="Emoji">😊</button>
+    <label for="fileInput" title="Attach Image/Video"><svg xmlns="http://www.w3.org/2000/svg" fill="white" height="20" width="20" viewBox="0 0 24 24"><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg></label>
+    <input type="file" id="fileInput" accept="image/*,video/*" />
+    <button id="recordBtn" title="Voice Message">🎙️</button>
+    <textarea id="messageInput" rows="1" placeholder="Type a message..."></textarea>
+    <button id="sendBtn">Send</button>
+  </div>
+
+  <div id="emojiPicker"></div>
+</div>
+
+<script>
+  const chatBox = document.getElementById('chatBox');
+  const messageInput = document.getElementById('messageInput');
+  const emojiBtn = document.getElementById('emojiBtn');
+  const emojiPicker = document.getElementById('emojiPicker');
+  const fileInput = document.getElementById('fileInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const recordBtn = document.getElementById('recordBtn');
+
+  // Emoji List (simple subset)
+  const emojis = ["😀","😃","😄","😁","😆","😅","🤣","😂","🙂","🙃","😉","😊","😇","😍","🤩","😘","😜","🤪","😎","🤓","🧐","😕","😟","🙁","😮","😲","😳","🥺","😡","🤬","😢","😭"];
+
+  // Show emoji picker on emoji button click
+  emojiBtn.addEventListener('click', () => {
+    if (emojiPicker.style.display === 'block') {
+      emojiPicker.style.display = 'none';
+    } else {
+      emojiPicker.style.display = 'block';
+      messageInput.focus();
+    }
+  });
+
+  // Populate emoji picker
+  emojis.forEach(e => {
+    const span = document.createElement('span');
+    span.textContent = e;
+    span.addEventListener('click', () => {
+      messageInput.value += e;
+      messageInput.focus();
+    });
+    emojiPicker.appendChild(span);
+  });
+
+  // Hide emoji picker when clicking outside
+  document.addEventListener('click', e => {
+    if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) {
+      emojiPicker.style.display = 'none';
+    }
+  });
+
+  // Send message
+  function sendMessage(content, type="text") {
+    if (!content) return;
+
+    const msg = document.createElement('div');
+    msg.classList.add('message', 'me');
+
+    if(type === "text") {
+      msg.textContent = content;
+    } else if (type === "image") {
+      const img = document.createElement('img');
+      img.src = content;
+      msg.appendChild(img);
+    } else if (type === "video") {
+      const vid = document.createElement('video');
+      vid.src = content;
+      vid.controls = true;
+      msg.appendChild(vid);
+    } else if (type === "audio") {
+      const aud = document.createElement('audio');
+      aud.src = content;
+      aud.controls = true;
+      msg.appendChild(aud);
+    }
+
+    const time = document.createElement('div');
+    time.className = 'timestamp';
+    time.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    msg.appendChild(time);
+
+    chatBox.appendChild(msg);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  sendBtn.addEventListener('click', () => {
+    const text = messageInput.value.trim();
+    if (!text) return;
+    sendMessage(text, 'text');
+    messageInput.value = '';
+  });
+
+  messageInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendBtn.click();
+    }
+  });
+
+  // Handle file uploads (image/video)
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const type = file.type;
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      if(type.startsWith('image/')) {
+        sendMessage(reader.result, 'image');
+      } else if (type.startsWith('video/')) {
+        sendMessage(reader.result, 'video');
+      }
+    };
+
+    reader.readAsDataURL(file);
+    fileInput.value = ''; // reset file input
+  });
+
+  // Voice recording
+  let mediaRecorder;
+  let audioChunks = [];
+  let recording = false;
+
+  recordBtn.addEventListener('click', async () => {
+    if (recording) {
+      mediaRecorder.stop();
+      recordBtn.textContent = '🎙️';
+      recording = false;
+    } else {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert('Your browser does not support audio recording.');
+        return;
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.start();
+        audioChunks = [];
+        mediaRecorder.ondataavailable = e => {
+          audioChunks.push(e.data);
+        };
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          sendMessage(audioUrl, 'audio');
+        };
+        recordBtn.textContent = '■'; // stop symbol
+        recording = true;
+      } catch (err) {
+        alert('Microphone access denied.');
+      }
+    }
+  });
+
+  // Simulated auto replies (for demo)
+  function autoReply() {
+    const replies = [
+      "হুম 😊",
+      "দারুন মেসেজ!",
+      "তুমি কেমন আছো?",
+      "আজ কি নতুন কিছু শিখেছো?",
+      "CodeBook দারুন জায়গা!",
+      "এই মেসেজগুলো Auto Reply!",
+      "তুমি কি medit করছো?"
+    ];
+    return replies[Math.floor(Math.random() * replies.length)];
+  }
+
+  // Simulate reply on each sent message
+  const observer = new MutationObserver(() => {
+    const lastMsg = chatBox.lastChild;
+    if (lastMsg && lastMsg.classList.contains('me')) {
+      setTimeout(() => {
+        const replyMsg = document.createElement('div');
+        replyMsg.classList.add('message', 'you');
+        replyMsg.textContent = autoReply();
+        const time = document.createElement('div');
+        time.className = 'timestamp';
+        time.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        replyMsg.appendChild(time);
+        chatBox.appendChild(replyMsg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 1200);
+    }
+  });
+
+  observer.observe(chatBox, {childList: true});
+
+</script>
+
+</body>
+</html>

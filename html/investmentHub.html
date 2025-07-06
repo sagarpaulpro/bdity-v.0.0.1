@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Investment Hub</title>
+  <link rel="stylesheet" href="../css/investmentHub.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>Investment Hub</h1>
+
+    <label for="investmentType">Select Investment Type:</label>
+    <select id="investmentType">
+      <option value="5">Fixed Deposit (5% yearly)</option>
+      <option value="10">Mutual Fund (10% yearly)</option>
+      <option value="15">Stock Market (15% yearly)</option>
+      <option value="25">Cryptocurrency (25% yearly)</option>
+    </select>
+
+    <label for="amount">Enter Investment Amount (USD):</label>
+    <input type="number" id="amount" placeholder="e.g. 1000" min="0" />
+
+    <label for="years">Investment Duration (Years):</label>
+    <input type="number" id="years" placeholder="e.g. 3" min="1" />
+
+    <button onclick="calculateReturn()">Calculate Return</button>
+
+    <div class="result" id="result"></div>
+  </div>
+<script src="../js/investmentHub.js"></script>
+</body>
+</html>

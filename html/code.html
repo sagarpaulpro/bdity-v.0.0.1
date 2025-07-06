@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VSCode Style Auto Tag + Live Preview</title>
+  <link rel="stylesheet" href="../css/code.css">
+
+</head>
+<body>
+  <div class="sidebar">
+    <h3>EXPLORER</h3>
+    <div class="file active">index.html</div>
+  </div>
+  <div class="main">
+    <div class="editor">
+      <textarea id="editor">// Type your HTML, CSS & JS here
+
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { background: #f0f0f0; font-family: sans-serif; }
+    h1 { color: blue; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1>Hello Bdity!</h1>
+  <button onclick="alert('Hi from Bdity!')">Click Me</button>
+</body>
+</html>
+      </textarea>
+    </div>
+    <div class="preview">
+      <iframe id="output"></iframe>
+    </div>
+  </div>
+
+  <script>
+    const editor = document.getElementById('editor');
+    const output = document.getElementById('output');
+
+    const snippets = {
+      p: "<p></p>",
+      div: "<div></div>",
+      h1: "<h1></h1>",
+      h2: "<h2></h2>",
+      span: "<span></span>",
+      a: '<a href=""></a>',
+      img: '<img src="" alt=""/>',
+      button: '<button></button>'
+    };
+
+    function updatePreview() {
+      const code = editor.value;
+      const doc = output.contentDocument || output.contentWindow.document;
+      doc.open();
+      doc.write(code);
+      doc.close();
+    }
+
+    editor.addEventListener('input', updatePreview);
+
+    // Auto insert tag on Tab
+    editor.addEventListener('keydown', function(e) {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = this.selectionStart;
+        const end = this.selectionEnd;
+        const text = this.value;
+
+        // get word before cursor
+        const before = text.substring(0, start);
+        const match = before.match(/(\w+)$/);
+        const word = match ? match[0] : '';
+
+        if (snippets[word]) {
+          const snippet = snippets[word];
+          const newText = before.slice(0, -word.length) + snippet + text.substring(end);
+          this.value = newText;
+
+          // place cursor inside tag (between > and </)
+          const cursorPos = before.length - word.length + snippet.indexOf('>') + 1;
+          this.setSelectionRange(cursorPos, cursorPos);
+        } else {
+          // normal tab insert 2 spaces
+          const newText = before + '  ' + text.substring(end);
+          this.value = newText;
+          this.setSelectionRange(start + 2, start + 2);
+        }
+        updatePreview();
+      }
+    });
+
+    // initial load
+    updatePreview();
+  </script>
+</body>
+</html>

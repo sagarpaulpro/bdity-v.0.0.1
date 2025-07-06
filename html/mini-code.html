@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Live Code Editor</title>
+  <link rel="stylesheet" href="../css/mini-code.css">
+</head>
+<body>
+
+  <h2>💻 HTML + CSS + JS Live Code Editor</h2>
+
+  <div class="editor-wrapper">
+    <!-- Editor Area -->
+    <div class="editor">
+      <div class="labels">
+        <span>HTML</span><span>CSS</span><span>JS</span>
+      </div>
+      <textarea id="html-code" placeholder="Write HTML here..."><h1>Hello Bdity!</h1></textarea>
+      <textarea id="css-code" placeholder="Write CSS here...">h1 { color: blue; text-align: center; }</textarea>
+      <textarea id="js-code" placeholder="Write JavaScript here...">console.log("Hello from JS");</textarea>
+    </div>
+
+    <!-- Output Area -->
+    <iframe id="output"></iframe>
+  </div>
+
+  <script>
+    const htmlInput = document.getElementById("html-code");
+    const cssInput = document.getElementById("css-code");
+    const jsInput = document.getElementById("js-code");
+    const output = document.getElementById("output");
+
+    function updateOutput() {
+      const html = htmlInput.value;
+      const css = `<style>${cssInput.value}</style>`;
+      const js = `<script>${jsInput.value}<\/script>`;
+      const finalCode = html + css + js;
+
+      const doc = output.contentDocument || output.contentWindow.document;
+      doc.open();
+      doc.write(finalCode);
+      doc.close();
+    }
+
+    htmlInput.addEventListener("input", updateOutput);
+    cssInput.addEventListener("input", updateOutput);
+    jsInput.addEventListener("input", updateOutput);
+
+    // Initial load
+    updateOutput();
+  </script>
+
+</body>
+</html>

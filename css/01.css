@@ -1,0 +1,138 @@
+    /* Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at center, #1c1c2b, #12121b);
+      color: white;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+    }
+
+    nav li {
+      list-style: none;
+      transform: translateY(0);
+      transition: all 0.3s;
+    }
+
+    nav li a {
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 20px;
+      background: #333;
+      border-radius: 20px;
+      font-weight: bold;
+      transition: 0.4s;
+    }
+
+    nav li a:hover {
+      background: #6a5acd;
+      box-shadow: 0 0 20px #6a5acd;
+      transform: scale(1.1);
+    }
+
+    section {
+      text-align: center;
+      padding: 120px 30px 80px;
+      position: relative;
+      z-index: 2;
+    }
+
+    h1 {
+      font-size: 48px;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: slideDown 1s ease-in-out;
+    }
+
+    p {
+      font-size: 20px;
+      margin-top: 15px;
+      color: #ccc;
+      animation: fadeIn 2s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Typing animation */
+    .typing {
+      border-right: 2px solid #fff;
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: typing 4s steps(30, end), blink 0.75s step-end infinite;
+      max-width: 100%;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent }
+    }
+
+    /* Background Particles */
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      background: transparent;
+    }
+
+    .stars span {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: float 10s infinite linear;
+    }
+
+    @keyframes float {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-100vh);
+      }
+    }

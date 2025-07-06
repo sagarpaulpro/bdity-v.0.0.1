@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Interactive Dark Ads Page</title>
+<style>
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  body {
+    background: #18191a;
+    color: #e4e6eb;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    font-size: 28px;
+    color: #2e89ff;
+    margin-bottom: 25px;
+    font-weight: bold;
+  }
+  .search-bar {
+    max-width: 700px;
+    margin: 0 auto 30px auto;
+    display: flex;
+  }
+  .search-bar input {
+    flex: 1;
+    padding: 12px 15px;
+    border-radius: 8px 0 0 8px;
+    border: none;
+    font-size: 16px;
+    background: #3a3b3c;
+    color: #e4e6eb;
+  }
+  .search-bar button {
+    background: #2e89ff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 0 8px 8px 0;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .search-bar button:hover {
+    background: #166fe5;
+  }
+  .ads-grid {
+    max-width: 700px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+    gap: 20px;
+  }
+  .ad-card {
+    background: #242526;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.6);
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+  }
+  .ad-card:hover {
+    transform: scale(1.03);
+  }
+  .ad-img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+  }
+  .ad-info {
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .ad-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #2e89ff;
+  }
+  .ad-desc {
+    font-size: 14px;
+    color: #ccc;
+    flex: 1;
+    margin-bottom: 10px;
+  }
+  .ad-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #44bd32;
+  }
+
+  /* Modal */
+  .modal-bg {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  .modal-content {
+    background: #242526;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.8);
+    position: relative;
+  }
+  .modal-close {
+    position: absolute;
+    top: 15px; right: 20px;
+    background: #2e89ff;
+    color: white;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 35px; height: 35px;
+    line-height: 35px;
+    text-align: center;
+  }
+  .modal-img {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 15px;
+  }
+  .modal-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2e89ff;
+    margin-bottom: 10px;
+  }
+  .modal-desc {
+    font-size: 16px;
+    color: #ddd;
+    margin-bottom: 15px;
+  }
+  .modal-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #44bd32;
+  }
+</style>
+</head>
+<body>
+
+<header>CodeBook Ads Hub</header>
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Search ads by title or description..." />
+  <button onclick="filterAds()">Search</button>
+</div>
+
+<div class="ads-grid" id="adsGrid">
+  <!-- Ads cards injected here -->
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal-content" id="modalContent">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <img src="" alt="Ad Image" class="modal-img" id="modalImg" />
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-desc" id="modalDesc"></div>
+    <div class="modal-price" id="modalPrice"></div>
+  </div>
+</div>
+
+<script>
+  const adsData = [
+    {
+      id: 1,
+      title: "High Performance Laptop",
+      description: "Latest model with 16GB RAM, RTX 3060, and 1TB SSD. Perfect for gaming and productivity.",
+      price: "$1200",
+      image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: 2,
+      title: "Wireless Headphones",
+      description: "Noise cancelling, 30 hours battery life, Bluetooth 5.0 connectivity.",
+      price: "$150",
+      image: "https://images.unsplash.com/photo-1512499617640-c2f999874cf8?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: 3,
+      title: "Smart Watch",
+      description: "Waterproof smartwatch with heart rate monitor, GPS, and music control.",
+      price: "$200",
+      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: 4,
+      title: "Gaming Chair",
+      description: "Ergonomic chair with lumbar support and adjustable height, perfect for long gaming sessions.",
+      price: "$250",
+      image: "https://images.unsplash.com/photo-1593642532871-8b12e02d091c?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: 5,
+      title: "4K Monitor",
+      description: "27 inch 4K UHD monitor with vibrant colors and high refresh rate.",
+      price: "$350",
+      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80"
+    }
+  ];
+
+  const adsGrid = document.getElementById('adsGrid');
+  const modalBg = document.getElementById('modalBg');
+  const modalImg = document.getElementById('modalImg');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalDesc = document.getElementById('modalDesc');
+  const modalPrice = document.getElementById('modalPrice');
+
+  function displayAds(ads) {
+    adsGrid.innerHTML = '';
+    ads.forEach(ad => {
+      const card = document.createElement('div');
+      card.className = 'ad-card';
+      card.innerHTML = `
+        <img src="${ad.image}" alt="${ad.title}" class="ad-img" />
+        <div class="ad-info">
+          <div class="ad-title">${ad.title}</div>
+          <div class="ad-desc">${ad.description.substring(0, 60)}...</div>
+          <div class="ad-price">${ad.price}</div>
+        </div>
+      `;
+      card.addEventListener('click', () => openModal(ad));
+      adsGrid.appendChild(card);
+    });
+  }
+
+  function openModal(ad) {
+    modalImg.src = ad.image;
+    modalTitle.textContent = ad.title;
+    modalDesc.textContent = ad.description;
+    modalPrice.textContent = ad.price;
+    modalBg.style.display = 'flex';
+  }
+
+  function closeModal() {
+    modalBg.style.display = 'none';
+  }
+
+  function filterAds() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = adsData.filter(ad => 
+      ad.title.toLowerCase().includes(query) ||
+      ad.description.toLowerCase().includes(query)
+    );
+    displayAds(filtered);
+  }
+
+  // Initial load
+  displayAds(adsData);
+
+  // Close modal on clicking outside content
+  modalBg.addEventListener('click', (e) => {
+    if(e.target === modalBg) closeModal();
+  });
+</script>
+
+</body>
+</html>

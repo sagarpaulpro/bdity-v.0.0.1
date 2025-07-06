@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sagar Paul's Portfolio</title>
+  <link rel="stylesheet" href="../css/profile.css"/>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <div class="profile">
+      <div class="profile-glow">
+        <img src="../images/profile.png" alt="Sagar Paul" class="profile-pic"/>
+      </div>
+      <h1>Sagar Paul</h1>
+      <p class="subtitle"><span class="typing"></span></p>
+      <button onclick="contactMe()" class="contact-btn">Contact Me</button>
+    </div>
+
+    <div class="section about">
+      <h2>About Me</h2>
+      <p>
+        I'm a dreamer, developer, and designer. I work with web, electronics, PCB and AutoCAD. Inspired by logic, creativity, and nature.
+      </p>
+    </div>
+
+    <div class="section skills">
+      <h2>Skills</h2>
+      <div class="skill">
+        <label>HTML & CSS</label>
+        <div class="bar"><div class="progress" style="width: 90%"></div></div>
+      </div>
+      <div class="skill">
+        <label>JavaScript</label>
+        <div class="bar"><div class="progress" style="width: 75%"></div></div>
+      </div>
+      <div class="skill">
+        <label>PCB Design</label>
+        <div class="bar"><div class="progress" style="width: 85%"></div></div>
+      </div>
+      <div class="skill">
+        <label>AutoCAD</label>
+        <div class="bar"><div class="progress" style="width: 70%"></div></div>
+      </div>
+    </div>
+
+    <div class="section contact">
+      <h2>Contact Info</h2>
+      <p>Email: <a href="mailto:yourname@email.com">yourname@email.com</a></p>
+      <p>Location: Satkhira, Bangladesh</p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+  <script>
+    // Typing animation
+    var typed = new Typed(".typing", {
+      strings: ["Student", "Web Developer", "PCB Designer", "AutoCAD Enthusiast", "Dreamer"],
+      typeSpeed: 70,
+      backSpeed: 40,
+      loop: true
+    });
+
+    // Smooth scroll reveal
+    const sections = document.querySelectorAll('.section');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+        }
+      });
+    }, { threshold: 0.1 });
+    sections.forEach(section => observer.observe(section));
+
+    function contactMe() {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    // Particle background
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 80 },
+        "color": { "value": "#00fff2" },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.5 },
+        "size": { "value": 3 },
+        "line_linked": { "enable": true, "distance": 150, "color": "#00fff2", "opacity": 0.4, "width": 1 },
+        "move": { "enable": true, "speed": 3 }
+      }
+    });
+  </script>
+</body>
+</html>
